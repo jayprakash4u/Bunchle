@@ -3,6 +3,7 @@ import { Manrope, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { StoreProvider } from "@/context/store-context";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -73,10 +74,13 @@ export default function RootLayout({
       className={`${manrope.variable} ${playfairDisplay.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-text selection:bg-primary-subtle selection:text-text">
-        <SiteHeader />
-        <div className="flex-1 flex flex-col">{children}</div>
-        <SiteFooter />
+        <StoreProvider>
+          <SiteHeader />
+          <div className="flex-1 flex flex-col">{children}</div>
+          <SiteFooter />
+        </StoreProvider>
       </body>
     </html>
   );
 }
+

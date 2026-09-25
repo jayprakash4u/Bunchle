@@ -16,6 +16,7 @@ import {
   BEST_SELLER_PRODUCTS,
   BestSellerProduct,
 } from "@/data/best-sellers";
+import { useStore } from "@/context/store-context";
 
 // Shopping Bag Icon matching the button design
 function BagOutlineIcon({ className = "w-4 h-4" }: { className?: string }) {
@@ -40,22 +41,20 @@ function BagOutlineIcon({ className = "w-4 h-4" }: { className?: string }) {
 // Single Best Seller Product Card
 export function BestSellerCard({
   product,
-  onAddToCart,
 }: {
   product: BestSellerProduct;
-  onAddToCart?: (product: BestSellerProduct) => void;
 }) {
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const { addToCart, isWishlisted, toggleWishlist } = useStore();
   const [isAdded, setIsAdded] = useState(false);
+
+  const wishlisted = isWishlisted(product.id);
 
   const handleAddToCart = () => {
     setIsAdded(true);
-    if (onAddToCart) {
-      onAddToCart(product);
-    }
+    addToCart(product);
     setTimeout(() => {
       setIsAdded(false);
-    }, 1600);
+    }, 1200);
   };
 
   const formattedPrice = `NPR ${product.price.toLocaleString("en-US")}`;
@@ -73,18 +72,18 @@ export function BestSellerCard({
         {/* Wishlist Heart Icon Button */}
         <button
           type="button"
-          onClick={() => setIsWishlisted(!isWishlisted)}
+          onClick={() => toggleWishlist(product.id)}
           className="flex h-7.5 w-7.5 items-center justify-center rounded-full text-stone-400 hover:text-[#e0483c] hover:bg-stone-50 transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e0483c]/30 cursor-pointer"
           aria-label={
-            isWishlisted
+            wishlisted
               ? `Remove ${product.name} from wishlist`
               : `Add ${product.name} to wishlist`
           }
-          aria-pressed={isWishlisted}
+          aria-pressed={wishlisted}
         >
           <HeartIcon
             className={`w-4 h-4 transition-all duration-200 ${
-              isWishlisted
+              wishlisted
                 ? "fill-[#e0483c] text-[#e0483c] scale-110"
                 : "text-stone-400 hover:text-stone-600"
             }`}
@@ -171,7 +170,6 @@ export function BestSellerCard({
 
 // Section Component with 4-Card Visible Scrollable Track
 export function BestSellersSection() {
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -198,13 +196,6 @@ export function BestSellersSection() {
       window.removeEventListener("resize", checkScrollability);
     };
   }, [checkScrollability]);
-
-  const handleAddToCart = (product: BestSellerProduct) => {
-    setToastMessage(`Added "${product.name}" to your cart!`);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 2800);
-  };
 
   const scroll = (direction: "left" | "right") => {
     if (scrollContainerRef.current) {
@@ -276,20 +267,11 @@ export function BestSellersSection() {
               <BestSellerCard
                 key={product.id}
                 product={product}
-                onAddToCart={handleAddToCart}
               />
             ))}
           </div>
         </div>
       </Container>
-
-      {/* Floating Notification Toast */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 bg-stone-900 text-white px-4 py-3 rounded-xl shadow-2xl animate-in fade-in slide-in-from-bottom-5 duration-200">
-          <CheckIcon className="w-4 h-4 text-emerald-400" />
-          <span className="text-xs sm:text-sm font-medium">{toastMessage}</span>
-        </div>
-      )}
     </section>
   );
 }
