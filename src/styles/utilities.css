@@ -1,0 +1,33 @@
+/* Glassmorphism Surface */
+.glass-panel {
+  background: rgba(250, 248, 245, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Skeleton Loading Shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-warm) 25%,
+    var(--color-border-subtle) 37%,
+    var(--color-surface-warm) 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+  border-radius: var(--radius-button-sm);
+}
+
+/* Subtle Hover Glow */
+.glow-accent {
+  box-shadow: 0 0 20px -5px rgba(224, 72, 60, 0.3);
+}
